@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SignInScreen extends StatelessWidget {
   SignInScreen({Key? key}) : super(key: key);
 
-  Controller controllerSignIn = Get.put(Controller());
+  MessageController controllerSignIn = Get.put(MessageController());
 
   @override
   Widget build(BuildContext context) {

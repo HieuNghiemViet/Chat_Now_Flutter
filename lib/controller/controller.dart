@@ -1,16 +1,18 @@
 import 'package:chat_now/constant/string_constant.dart';
+import 'package:chat_now/controller/sharePrefer.dart';
 import 'package:chat_now/model/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class Controller extends GetxController {
+class MessageController extends GetxController {
   final auth = FirebaseAuth.instance;
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+  final messageController = TextEditingController();
+  final messageFocusNode = FocusNode();
 
   var isPasswordHidden = true.obs;
   var isPasswordConfirmHidden = true.obs;
@@ -23,39 +25,76 @@ class Controller extends GetxController {
   var content = ''.obs;
   var sender = ''.obs;
   var receiver = ''.obs;
+  var createTime = ''.obs;
 
-  final message = Get.put(Message());
+  var list = <Message>[].obs;
 
-  void readMessage() {
-    fireStore.collection(StringConstant.message).get().then((querySnapshot) {
-      querySnapshot.docs.forEach((result) {
-        final data = result.data();
-        print(data);
-      });
+  MessageController() {
+    readMessage();
+   subscribe();
+  }
+
+  void readMessage() async {
+    final querySnapShot =
+        await fireStore.collection(StringConstant.message).get();
+    final messages =
+        querySnapShot.docs.map((e) => Message.fromJson(e.data(), e.id)).toList();
+    messages.sort((e1, e2) =>
+        e2.createTime?.compareTo(e1.createTime ?? Timestamp.now()) ?? 0);
+
+    list.assignAll(messages);
+    // list.reversed;
+    print(list);
+
+
+
+    for (var e in list) {
+      // print("content ${e.createTime?.toDate().toString()}");
+      // print("content con ${e.content}");
+    }
+  }
+
+  void subscribe() {
+    final stream = fireStore.collection(StringConstant.message).snapshots();
+    stream.listen((event) {
+      final messageEvent = event.docs.map((e) => Message.fromJson(e.data(), e.id)).toList();
+      print("count ${event.docs.length}");
+      messageEvent.sort((e1, e2) =>
+      e2.createTime?.compareTo(e1.createTime ?? Timestamp.now()) ?? 0);
+
+      list.assignAll(messageEvent);
+      // list.add()
+      // list.reversed;
     });
   }
 
-  void writeMessage() {
+  void writeMessage() async {
+    if (messageController.text.isEmpty) {
+      return;
+    }
+
+    final sender = await SharePreferencesHelper.getSharePreferences('email');
+
     fireStore.collection(StringConstant.message).add({
-      StringConstant.content: content,
+      StringConstant.content: messageController.text,
       StringConstant.createTime: DateTime.now(),
-      StringConstant.receiver: receiver,
+      StringConstant.receiver: 'HungTD',
       StringConstant.sender: sender,
     }).then((value) {
-      print(value.id);
+      print('HieunV: ${value.id}');
+    });
+
+    messageController.clear();
+  }
+
+  void deleteMessage(String id) {
+    fireStore.collection(StringConstant.message).doc(id)
+        .delete()
+        .then((value){
     });
   }
 
-  void deleteMessage() {
-    var firebaseUser =  FirebaseAuth.instance.currentUser;
-    fireStore.collection(StringConstant.message).doc(firebaseUser?.uid).delete().then((_) {
-      print("success!");
-    });
-  }
-
-  void updateMessageInDocument() {
-  }
-
+  void updateMessageInDocument() {}
   Future<bool> signIn() async {
     if (email.isEmpty || password.isEmpty) {
       return false;
@@ -70,7 +109,7 @@ class Controller extends GetxController {
       } catch (_) {
         return false;
       }
-      setSharePreferences('email', email.value);
+      SharePreferencesHelper.setSharePreferences('email', email.value);
       return true;
     }
   }
@@ -95,21 +134,5 @@ class Controller extends GetxController {
       }
       return false;
     }
-  }
-
-  void setSharePreferences(key, value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(key, value);
-  }
-
-  Future<String?> getSharePreferences(key) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
-  }
-
-  void removeSharePreferences(key) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(key);
-    prefs.clear();
   }
 }

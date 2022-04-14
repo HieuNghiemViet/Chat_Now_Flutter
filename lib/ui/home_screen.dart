@@ -1,4 +1,5 @@
 import 'package:chat_now/controller/controller.dart';
+import 'package:chat_now/controller/sharePrefer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,7 @@ import 'package:get/get.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-  final controller = Get.put(Controller());
+  final controller = Get.put(MessageController());
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class HomeScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                controller.removeSharePreferences('email');
+                SharePreferencesHelper.removeSharePreferences('email');
                 Get.offNamed('/');
                 print('logout');
               },

@@ -7,7 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({Key? key}) : super(key: key);
 
-  Controller controllerSignUp = Get.put(Controller());
+  MessageController controllerSignUp = Get.put(MessageController());
 
   @override
   Widget build(BuildContext context) {
