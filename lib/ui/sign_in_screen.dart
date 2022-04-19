@@ -1,4 +1,4 @@
-import 'package:chat_now/controller/controller.dart';
+import 'package:chat_now/constant/string_constant.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../controller/message_controller.dart';
 
 class SignInScreen extends StatelessWidget {
   SignInScreen({Key? key}) : super(key: key);
@@ -44,25 +45,27 @@ class SignInScreen extends StatelessWidget {
             controllerSignIn.email = id.trim().obs;
           },
           decoration: InputDecoration(
-              hintText: 'User name',
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15))),
+              hintText: StringConstant.userName,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
         ),
         SizedBox(height: 20),
-        Obx(() => TextField(
+        Obx(
+          () => TextField(
             onChanged: (pass) {
               controllerSignIn.password = pass.trim().obs;
             },
             obscureText: controllerSignIn.isPasswordHidden.value,
             decoration: InputDecoration(
                 suffixIcon: IconButton(
-                    icon: Icon(
-                        controllerSignIn.isPasswordHidden.value ? Icons.visibility : Icons.visibility_off
-                    ),
+                    icon: Icon(controllerSignIn.isPasswordHidden.value
+                        ? Icons.visibility
+                        : Icons.visibility_off),
                     onPressed: () {
-                      controllerSignIn.isPasswordHidden.value = !controllerSignIn.isPasswordHidden.value;
-                }),
-                hintText: 'Password',
+                      controllerSignIn.isPasswordHidden.value =
+                          !controllerSignIn.isPasswordHidden.value;
+                    }),
+                hintText: StringConstant.passWord,
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15))),
           ),
@@ -81,10 +84,10 @@ class SignInScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
           onPressed: () async {
             final login = await controllerSignIn.signIn();
-            if(login) {
-              Get.offAllNamed('/home');
+            if (login) {
+              Get.offAllNamed(StringConstant.homeScreen);
             } else {
-             Get.snackbar('...', 'Nhap lai tai khoan voi mat khau');
+              Get.snackbar('Error', 'Nhap lai tai khoan voi mat khau');
             }
           },
           child: Text('SIGN IN', style: TextStyle(color: Colors.white)),
@@ -102,13 +105,12 @@ class SignInScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         child: FlatButton(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-            onPressed: ()  {
-                Get.toNamed('/sign_up');
+            onPressed: () {
+              Get.toNamed(StringConstant.signUpScreen);
             },
-            child: Text(
-                'SIGN UP', style: TextStyle(color: Colors.deepPurpleAccent)),
-            color: Colors.tealAccent
-        ),
+            child: Text('SIGN UP',
+                style: TextStyle(color: Colors.deepPurpleAccent)),
+            color: Colors.tealAccent),
       ),
     );
   }

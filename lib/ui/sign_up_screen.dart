@@ -1,8 +1,10 @@
-import 'package:chat_now/controller/controller.dart';
+import 'package:chat_now/constant/string_constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+
+import '../controller/message_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({Key? key}) : super(key: key);
@@ -39,7 +41,7 @@ class SignUpScreen extends StatelessWidget {
             controllerSignUp.email = username.obs;
           },
           decoration: InputDecoration(
-              hintText: 'User name',
+              hintText: StringConstant.userName,
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
         ),
@@ -51,7 +53,7 @@ class SignUpScreen extends StatelessWidget {
             },
             decoration: InputDecoration(
                 suffixIcon: customSuffixIcon(),
-                hintText: 'Password',
+                hintText: StringConstant.passWord,
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
           ),
@@ -70,7 +72,7 @@ class SignUpScreen extends StatelessWidget {
                     onPressed: () {
                       controllerSignUp.isPasswordConfirmHidden.value = !controllerSignUp.isPasswordConfirmHidden.value;
                     }),
-                hintText: 'Confirm Password',
+                hintText: StringConstant.confirmPassword,
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
           ),
@@ -101,9 +103,9 @@ class SignUpScreen extends StatelessWidget {
           onPressed: () async {
             final signUp = await controllerSignUp.signUp();
             if(signUp) {
-              Get.offAllNamed('/home');
+              Get.offAllNamed(StringConstant.homeScreen);
             } else {
-              Get.snackbar('...', 'Nhap tai khoan voi mat khau de dang ki');
+              Get.snackbar('Error', 'Nhap tai khoan voi mat khau de dang ki');
             }
           },
           child:

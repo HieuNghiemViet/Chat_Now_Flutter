@@ -344,7 +344,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.7):
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
-  - cloud_firestore (3.1.11):
+  - cloud_firestore (3.1.12):
     - Firebase/Firestore (= 8.14.0)
     - firebase_core
     - Flutter
@@ -359,14 +359,14 @@ PODS:
   - Firebase/Storage (8.14.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.14.0)
-  - firebase_auth (3.3.13):
+  - firebase_auth (3.3.14):
     - Firebase/Auth (= 8.14.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.14.0):
+  - firebase_core (1.14.1):
     - Firebase/CoreOnly (= 8.14.0)
     - Flutter
-  - firebase_storage (10.2.11):
+  - firebase_storage (10.2.12):
     - Firebase/Storage (= 8.14.0)
     - firebase_core
     - Flutter
@@ -451,9 +451,15 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - "permission_handler (5.1.0+2)":
+    - Flutter
   - PromisesObjC (2.1.0)
   - shared_preferences_ios (0.0.1):
     - Flutter
+  - twilio_programmable_video (0.12.1):
+    - Flutter
+    - TwilioVideo (~> 4.6)
+  - TwilioVideo (4.6.3)
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -461,7 +467,9 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
+  - twilio_programmable_video (from `.symlinks/plugins/twilio_programmable_video/ios`)
 
 SPEC REPOS:
   trunk:
@@ -481,6 +489,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PromisesObjC
+    - TwilioVideo
 
 EXTERNAL SOURCES:
   cloud_firestore:
@@ -493,17 +502,21 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
   shared_preferences_ios:
     :path: ".symlinks/plugins/shared_preferences_ios/ios"
+  twilio_programmable_video:
+    :path: ".symlinks/plugins/twilio_programmable_video/ios"
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
-  cloud_firestore: dd4c0ed7d60794e3890f0cf6566d749838fe9ee0
+  cloud_firestore: 6894050fe57f80e72d84d5d6c57392f3d1615c19
   Firebase: 7e8fe528c161b9271d365217a74c16aaf834578e
-  firebase_auth: e720e83a58c9efe4f3b8a96b4afe2fbf84fdb28e
-  firebase_core: b0b382f1497ab407aceb25e41e3036c8798c1609
-  firebase_storage: f8843a3d37aafd048659f2cb523107bb54e36f69
+  firebase_auth: db3557d178b86a0d2ccdb7a878a1d1c2fe70de4e
+  firebase_core: cdef02fcf55872191eb0568d4c31a7a700e38582
+  firebase_storage: 4a9711df9392778a9f8641d5ce4cb7a228c0472c
   FirebaseAuth: c5fde343630090253d3af7e2d35697b414b40202
   FirebaseCore: b84a44ee7ba999e0f9f76d198a9c7f60a797b848
   FirebaseCoreDiagnostics: fd0c8490f34287229c1d6c103d3a55f81ec85712
@@ -517,9 +530,12 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 4577a4cc914a5a07c40a8a0ad0acc22080418c2d
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
+  twilio_programmable_video: 9a93b9e5bafa901e3e826c2d54b41a4376fa9f98
+  TwilioVideo: 4afaac028c5886f2f3b313a9fcc146a6b7ca34e2
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 21610d881a343c6a8c07d4cff9c40081faa1cb56
 
 COCOAPODS: 1.11.2
