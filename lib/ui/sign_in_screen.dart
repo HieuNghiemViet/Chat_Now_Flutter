@@ -1,17 +1,13 @@
 import 'package:chat_now/constant/string_constant.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../controller/message_controller.dart';
+import '../controller/sign_in_up_controller.dart';
 
 class SignInScreen extends StatelessWidget {
   SignInScreen({Key? key}) : super(key: key);
 
-  MessageController controllerSignIn = Get.put(MessageController());
+  SignInUpController controllerSignIn = Get.put(SignInUpController());
 
   @override
   Widget build(BuildContext context) {

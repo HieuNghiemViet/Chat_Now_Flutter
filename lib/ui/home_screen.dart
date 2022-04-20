@@ -1,15 +1,15 @@
+import 'package:chat_now/controller/home_controller.dart';
 import 'package:chat_now/controller/share_prefer.dart';
 import 'package:chat_now/model/room.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../constant/string_constant.dart';
-import '../controller/message_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-  final controller = Get.put(MessageController());
+  final homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,9 @@ class HomeScreen extends StatelessWidget {
   Widget listRoom() {
     return Obx(
       () => ListView.builder(
-        itemCount: controller.listRoom.length,
+        itemCount: homeController.listRoom.length,
         itemBuilder: (context, index) {
-          final room = controller.listRoom[index];
+          final room = homeController.listRoom[index];
           return _itemRoom(room);
         },
       ),
@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
       margin: EdgeInsets.only(top: 10, bottom: 2, left: 10, right: 10),
       child: ListTile(
         leading: Icon(Icons.person),
-        title: Text(controller.getFriendName(room)),
+        title: Text(homeController.getFriendName(room)),
         onTap: () {
           Get.toNamed(StringConstant.messageScreen, arguments: room);
         },

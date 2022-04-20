@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:chat_now/controller/home_controller.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,48 +12,49 @@ import '../model/room.dart';
 class MessageScreen extends StatefulWidget {
   MessageScreen({Key? key}) : super(key: key);
 
-
   @override
   State<MessageScreen> createState() => _MessageScreenState();
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final controller = Get.put(MessageController());
 
+  late MessageController messageController;
   Room _room = Get.arguments;
+  final homeController = Get.put(HomeController());
 
   @override
   void initState() {
-    controller.subscribe(_room.id.toString());
-    controller.filterMessageByRoomId(_room.id.toString());
+    messageController = Get.put(MessageController(_room));
+    messageController.subscribe(_room.id.toString());
+    messageController.filterMessageByRoomId(_room.id.toString());
+
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.getFriendName(_room)),
+        title: Text(homeController.getFriendName(_room)),
       ),
       body: chatMessage(),
     );
   }
 
   Widget chatMessage() {
-    // print(_room.friend.value);
     return Column(
       children: [
         Expanded(
-          child: Obx(() => ListView.builder(
+          child: Obx(
+            () => ListView.builder(
               reverse: true,
               padding: EdgeInsets.all(8),
-              itemCount: controller.list.length,
+              itemCount: messageController.list.length,
               itemBuilder: (context, index) {
-                final mess = controller.list[index];
+                final mess = messageController.list[index];
                 return GestureDetector(
-                  child: (mess.sender != controller.getFriendName(_room)) ? _itemChatSender(mess) : _itemChatReceiver(mess),
+                  child: (mess.sender != homeController.getFriendName(_room)) ? _itemChatSender(mess) : _itemChatReceiver(mess),
                   onLongPress: () {
-                    controller.deleteMessage(mess.id);
+                    messageController.deleteMessage(mess.id);
                   },
                 );
               },
@@ -111,10 +115,16 @@ class _MessageScreenState extends State<MessageScreen> {
       padding: EdgeInsets.all(8.0),
       child: Row(
         children: <Widget>[
+          IconButton(
+            onPressed: ()  {
+              messageController.pickAnImage();
+            },
+            icon: Icon(Icons.image, color: Colors.blue),
+          ),
           Expanded(
             child: TextField(
-              controller: controller.messageController,
-              focusNode: controller.messageFocusNode,
+              controller: messageController.textFieldMessageController,
+              focusNode: messageController.messageFocusNode,
               decoration: InputDecoration.collapsed(
                 hintText: 'Your message here...',
               ),
@@ -122,7 +132,7 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
           IconButton(
             onPressed: () {
-              controller.writeMessage(_room.id.toString(), controller.getFriendName(_room));
+              messageController.writeMessage(content: messageController.textFieldMessageController.text);
             },
             icon: Icon(Icons.send),
             color: Colors.blue,

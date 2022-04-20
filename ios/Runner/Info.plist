@@ -48,6 +48,15 @@
     <string>Your message to user when the microphone is accessed for the first time</string>
     <key>io.flutter.embedded_views_preview</key>
     <true/>
+
+
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Access to pick a photo</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Access to pick a photo</string>
+
+
+
 </dict>
 </plist>
 

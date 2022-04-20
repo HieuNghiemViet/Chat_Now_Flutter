@@ -1,15 +1,14 @@
 import 'package:chat_now/constant/string_constant.dart';
+import 'package:chat_now/controller/sign_in_up_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-import '../controller/message_controller.dart';
-
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({Key? key}) : super(key: key);
 
-  MessageController controllerSignUp = Get.put(MessageController());
+  SignInUpController controllerSignUp = Get.put(SignInUpController());
 
   @override
   Widget build(BuildContext context) {

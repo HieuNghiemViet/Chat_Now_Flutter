@@ -3,6 +3,8 @@ class StringConstant {
   static String room = 'room';
   static String roomId = 'room_id';
   static String content = 'content';
+  static String contentType = 'contentType';
+  static String imageUrl = 'image_url';
   static String createTime = 'createTime';
   static String receiver = 'receiver';
   static String sender = 'sender';

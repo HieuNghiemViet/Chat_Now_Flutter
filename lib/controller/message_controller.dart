@@ -1,45 +1,71 @@
+import 'dart:io';
+import 'dart:math';
 import 'package:chat_now/constant/string_constant.dart';
+import 'package:chat_now/controller/home_controller.dart';
 import 'package:chat_now/controller/share_prefer.dart';
 import 'package:chat_now/model/message.dart';
 import 'package:chat_now/model/room.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MessageController extends GetxController {
-  final auth = FirebaseAuth.instance;
-
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  FirebaseStorage _storage = FirebaseStorage.instance;
 
-  final messageController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  late File _image;
+
+  final textFieldMessageController = TextEditingController();
   final messageFocusNode = FocusNode();
 
-  var isPasswordHidden = true.obs;
-  var isPasswordConfirmHidden = true.obs;
-  var isSuccess = true.obs;
-
-  var email = ''.obs;
-  var password = ''.obs;
-  var passwordConfirm = ''.obs;
-
   var list = <Message>[].obs;
-  var listRoom = <Room>[].obs;
 
-  var myEmail = "";
+  late Room _room;
 
-  MessageController() {
-    readMessage();
-    readRoom();
-     //subscribe();
-     //filterMessageByRoomId();
+  MessageController(Room room) {
+    _room = room;
+    //readMessage();
   }
 
-  Future<void> getMyEmail() async {
-    myEmail =
-        await SharePreferencesHelper.getSharePreferences(StringConstant.email) ?? "";
-    print("email $myEmail");
+  Future<void> pickAnImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    _image = File(image?.path ?? '');
+    printInfo(info: _image.toString());
+    final path = uploadFile();
+    print('HieuNV: $path');
+    writeMessage(file: _image);
   }
+
+
+  Future<String?> uploadFile() async {
+    if(_image != null) {
+      print("image File ${_image.path}");
+      Reference reference = _storage.ref(getRandom(10));
+      try {
+        await reference.putFile(_image);
+        return await reference.getDownloadURL();
+      } catch(e) {
+        print(e);
+      }
+    }
+    return null;
+  }
+
+  Future<XFile?> pickAnVideo() async {
+    final XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
+    return video;
+  }
+
+  Future<List<XFile>?> pickMultipleImage() async {
+    final List<XFile>? images = await _picker.pickMultiImage();
+    return images;
+  }
+
+
 
   void readMessage() async {
     final querySnapShot =
@@ -54,16 +80,7 @@ class MessageController extends GetxController {
     list.assignAll(messages);
   }
 
-  void readRoom() async {
-    await getMyEmail();
-    print("myemail $myEmail");
-    final roomCollection = fireStore.collection(StringConstant.room);
-    final querySnapShot = await roomCollection
-        .where('user', arrayContains: myEmail)
-        .get();
-    final room = querySnapShot.docs.map((e) => Room.fromJson(e.data(), e.id)).toList();
-    listRoom.assignAll(room);
-  }
+
 
   void filterMessageByRoomId(String roomId) async {
     list.clear();
@@ -76,26 +93,36 @@ class MessageController extends GetxController {
         .map((e) => Message.fromJson(e.data(), e.id))
         .toList();
     messages.sort((e1, e2) => e2.createTime?.compareTo(e1.createTime ?? Timestamp.now()) ?? 0);
-
     list.assignAll(messages);
   }
 
-  void writeMessage(String roomId, String receiver) async {
-    if (messageController.text.isEmpty) {
-      return;
+
+  void writeMessage({String? content, File? file}) async {
+    var mesContent = "";
+    var contentType = 0; //0: text - 1: image
+
+    if(content != null) {
+      mesContent = content;
     }
+
+    if(file != null) {
+      final resultUpFile = await uploadFile();
+      mesContent = resultUpFile ?? "";
+      contentType = 1;
+    }
+
+    var receiver = HomeController().getFriendName(_room);
     final sender =
         await SharePreferencesHelper.getSharePreferences(StringConstant.email);
 
     fireStore.collection(StringConstant.message).add({
-      StringConstant.content: messageController.text,
+      StringConstant.content: mesContent,
+      StringConstant.contentType: contentType,
       StringConstant.createTime: DateTime.now(),
       StringConstant.receiver: receiver,
       StringConstant.sender: sender,
-      StringConstant.roomId: roomId
+      StringConstant.roomId: _room.id,
     }).then((value) {});
-
-    messageController.clear();
   }
 
   void subscribe(String roomId) {
@@ -112,8 +139,6 @@ class MessageController extends GetxController {
     });
   }
 
-
-
   void deleteMessage(String id) {
     fireStore
         .collection(StringConstant.message)
@@ -122,56 +147,10 @@ class MessageController extends GetxController {
         .then((value) {});
   }
 
-  void updateMessageInDocument() {}
-
-  Future<bool> signIn() async {
-    if (email.isEmpty || password.isEmpty) {
-      return false;
-    } else {
-      try {
-        final userCred = await auth.signInWithEmailAndPassword(
-            email: email.toString(), password: password.toString());
-
-        if (userCred.user == null) {
-          return false;
-        }
-      } catch (_) {
-        return false;
-      }
-      SharePreferencesHelper.setSharePreferences(
-          StringConstant.email, email.value);
-      return true;
-    }
+  String getRandom(int length){
+    const ch = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz';
+    Random r = Random();
+    return String.fromCharCodes(Iterable.generate(
+        length, (_) => ch.codeUnitAt(r.nextInt(ch.length))));
   }
-
-  Future<bool> signUp() async {
-    if (email.isEmpty || password.isEmpty) {
-      return false;
-    } else {
-      if (password == passwordConfirm) {
-        try {
-          final result = await auth.createUserWithEmailAndPassword(
-              email: email.toString(), password: password.toString());
-
-          if (result.user == null) {
-            return false;
-          }
-          SharePreferencesHelper.setSharePreferences(
-              StringConstant.email, email.value);
-          return true;
-        } catch (_) {
-          return false;
-        }
-      }
-      return false;
-    }
-  }
-
-  String getFriendName(Room room)  {
-    // final name =  (room.user1 != myEmail ? room.user1 : room.user2);
-    // print("name $name");
-
-    return (room.user1 != myEmail ? room.user1 : room.user2) ?? "";
-  }
-
 }

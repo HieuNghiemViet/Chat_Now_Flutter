@@ -18,11 +18,11 @@ class Message {
       this.roomID});
 
   Map<String, dynamic> toJson() => {
-        "content": content,
-        "createTime": createTime,
-        "sender": sender,
-        "receiver": receiver,
-        "room_id": roomID
+        StringConstant.content: content,
+        StringConstant.createTime: createTime,
+        StringConstant.sender: sender,
+        StringConstant.receiver: receiver,
+        StringConstant.roomId: roomID,
       };
 
   factory Message.fromJson(Map<dynamic, dynamic> json, String id) => Message(
